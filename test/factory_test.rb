@@ -36,7 +36,7 @@ class FactoryTest < Test::Unit::TestCase
       Factory.define(@name, @options) {|f| }
     end
 
-    should "pass the factory do the block" do
+    should "pass the factory to the block" do
       yielded = nil
       Factory.define(@name) do |y|
         yielded = y
@@ -337,6 +337,20 @@ class FactoryTest < Test::Unit::TestCase
 
       should "raise an ActiveRecord::RecordInvalid error for invalid instances" do
         assert_raise(ActiveRecord::RecordInvalid) do
+          @factory.create(:first_name => nil)
+        end
+      end
+
+    end
+    
+    context "when using the validate option" do
+      
+      setup do
+        @factory = Factory.new(:user, :validate => false)
+      end
+      
+      should "not raise an error when saving" do
+        assert_nothing_raised do
           @factory.create(:first_name => nil)
         end
       end

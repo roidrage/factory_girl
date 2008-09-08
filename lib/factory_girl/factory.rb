@@ -35,8 +35,8 @@ class Factory
     @build_class ||= class_for(@options[:class] || factory_name)
   end
 
-  def initialize (name, options = {}) #:nodoc:
-    options.assert_valid_keys(:class)
+  def initialize (name, options = {:validate => true}) #:nodoc:
+    options.assert_valid_keys(:class, :validate)
     @factory_name = factory_name_for(name)
     @options      = options
     @attributes   = []
@@ -127,7 +127,11 @@ class Factory
 
   def create (attrs = {}) #:nodoc:
     instance = build_instance(attrs, :create)
-    instance.save!
+    if @options[:validate]
+      instance.save!
+    else
+      instance.save_with_validation false
+    end
     instance
   end
 
