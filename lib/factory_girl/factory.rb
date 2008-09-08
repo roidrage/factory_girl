@@ -22,7 +22,8 @@ class Factory
   #     class: the class that will be used when generating instances for this
   #            factory. If not specified, the class will be guessed from the 
   #            factory name.
-  #
+  #     validate: if set to false, the instance will be saved without running
+  #               the ActiveRecord validations
   # Yields:
   #    The newly created factory (Factory)
   def self.define (name, options = {})
