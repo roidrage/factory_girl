@@ -1,7 +1,7 @@
 class Factory
   
   cattr_accessor :factories #:nodoc:
-  cattr_accessor :singletons
+  cattr_accessor :singletons #:nodoc:
   
   self.factories = {}
   self.singletons = {}
@@ -25,8 +25,14 @@ class Factory
   #     class: the class that will be used when generating instances for this
   #            factory. If not specified, the class will be guessed from the 
   #            factory name.
-  #     validate: if set to false, the instance will be saved without running
-  #               the ActiveRecord validations
+  #  validate: if set to false, the instance will be saved without running
+  #            the ActiveRecord validations
+  # singleton: if set to true there will only be one instance created with that
+  #            specific factory. Helps with more complex setups where you need
+  #            the same object in several associations, or just in general
+  #            want to prevent factory_girl from recreating new instances on
+  #            subsequent calls.
+  #
   # Yields:
   #    The newly created factory (Factory)
   def self.define (name, options = {})
