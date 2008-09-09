@@ -1,7 +1,10 @@
 class Factory
   
   cattr_accessor :factories #:nodoc:
+  cattr_accessor :singletons
+  
   self.factories = {}
+  self.singletons = {}
 
   # An Array of strings specifying locations that should be searched for
   # factory definitions. By default, factory_girl will attempt to require
@@ -37,7 +40,7 @@ class Factory
   end
 
   def initialize (name, options = {:validate => true}) #:nodoc:
-    options.assert_valid_keys(:class, :validate)
+    options.assert_valid_keys(:class, :validate, :singleton)
     @factory_name = factory_name_for(name)
     @options      = options
     @attributes   = []
@@ -127,12 +130,19 @@ class Factory
   end
 
   def create (attrs = {}) #:nodoc:
-    instance = build_instance(attrs, :create)
+    if @options[:singleton] && @@singletons[@factory_name]
+      instance = @@singletons[@factory_name]
+    end
+    
+    instance = build_instance(attrs, :create) if instance.nil? || instance.class.find_by_id(instance.id).nil?
+    
     if @options[:validate]
       instance.save!
     else
       instance.save_with_validation false
     end
+
+    @@singletons[@factory_name] = instance if @options[:singleton]
     instance
   end
 

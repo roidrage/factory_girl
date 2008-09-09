@@ -357,6 +357,22 @@ class FactoryTest < Test::Unit::TestCase
 
     end
 
+    context "when using singletons" do
+      setup do
+        @factory = Factory.new(:user, :singleton => true)
+      end
+      
+      should "fetch the same instance on subsequent creates" do
+        instance = @factory.create
+        assert_equal instance, @factory.create
+      end
+      
+      should "build a new instance when the old instance isn't in the database" do
+        instance = @factory.create
+        instance.destroy
+        assert_not_equal instance, @factory.create
+      end
+    end
   end
 
   context "a factory with a string for a name" do
